@@ -1,0 +1,207 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Domain/Entity/'
+            - '../src/Kernel.php'
+            - '../src/Tests/'
+
+    App\Infrastructure\Controller\:
+        resource: '../src/Infrastructure/Controller'
+        tags: [ 'controller.service_arguments' ]
+
+    #region Services
+
+
+    # UseCase aliases
+    App\Application\UseCase $createChampionship: '@create_championship_usecase'
+    App\Application\UseCase $showChampionships: '@show_championships_usecase'
+    App\Application\UseCase $showChampionship: '@show_championship_usecase'
+    App\Application\UseCase $createDivision: '@create_division_usecase'
+    App\Application\UseCase $playDivisionGames: '@play_division_games_usecase'
+    App\Application\UseCase $createPlayoff: '@create_playoff_usecase'
+    App\Application\UseCase $playPlayoffMatches: '@play_playoff_matches_usecase'
+
+    # UseCaseRequestAliases
+    App\Application\UseCaseRequest $createChampionshipRequest: '@create_championship_usecase_request'
+    App\Application\UseCaseRequest $showChampionshipRequest: '@show_championship_usecase_request'
+    App\Application\UseCaseRequest $createDivisionRequest: '@create_division_usecase_request'
+    App\Application\UseCaseRequest $playDivisionGamesRequest: '@play_division_games_usecase_request'
+    App\Application\UseCaseRequest $createPlayoffRequest: '@create_playoff_usecase_request'
+
+    # UseCasePresenterAliases
+    App\Application\UseCasePresenter $createChampionshipPresenter: '@create_championship_usecase_presenter'
+    App\Application\UseCasePresenter $showChampionshipsPresenter: '@show_championships_usecase_presenter'
+    App\Application\UseCasePresenter $showChampionshipPresenter: '@show_championship_usecase_presenter'
+    App\Application\UseCasePresenter $createDivisionPresenter: '@create_division_usecase_presenter'
+    App\Application\UseCasePresenter $playDivisionGamesPresenter: '@play_division_games_usecase_presenter'
+    App\Application\UseCasePresenter $createPlayoffPresenter: '@create_playoff_usecase_presenter'
+    App\Application\UseCasePresenter $playPlayoffMatchesPresenter: '@play_playoff_matches_usecase_presenter'
+    #endregion
+
+    #region Controllers
+    create_championship_controller:
+        class: App\Infrastructure\Controller\CreateChampionshipController
+        tags: [ 'controller.service_arguments' ]
+        arguments:
+            - 'create_championship_usecase'
+            - 'create_championship_usecase_request'
+            - 'create_championship_usecase_presenter'
+
+    show_championships_controller:
+        class: App\Infrastructure\Controller\ShowChampionshipsController
+        tags: [ 'controller.service_arguments' ]
+        arguments:
+            - 'show_championships_usecase'
+            - 'show_championships_usecase_presenter'
+
+    show_championship_controller:
+        class: App\Infrastructure\Controller\ShowChampionshipController
+        tags: [ 'controller.service_arguments' ]
+        arguments:
+            - 'show_championship_usecase'
+            - 'show_championship_usecase_presenter'
+
+    create_division_controller:
+        class: App\Infrastructure\Controller\CreateDivisionController
+        tags: [ 'controller.service_arguments' ]
+        arguments:
+            - 'create_division_usecase'
+            - 'create_division_usecase_request'
+            - 'create_division_usecase_presenter'
+
+    play_division_games_controller:
+        class: App\Infrastructure\Controller\PlayDivisionGamesController
+        tags: [ 'controller.service_arguments' ]
+        arguments:
+            - 'play_division_games_usecase'
+            - 'play_division_games_usecase_presenter'
+
+    create_playoff_controller:
+        class: App\Infrastructure\Controller\CreateplayoffController
+        tags: [ 'controller.service_arguments' ]
+        arguments:
+            - 'create_playoff_usecase'
+            - 'create_playoff_usecase_presenter'
+
+    play_playoff_matches_controller:
+        class: App\Infrastructure\Controller\PlayPlayoffMathesController
+        tags: [ 'controller.service_arguments' ]
+        arguments:
+            - 'play_playoff_matches_usecase'
+            - 'play_playoff_matches_usecase_presenter'
+
+    #endregion
+
+    #region repositories
+    App\Domain\Entity\Championship\ChampionshipRepository $championships: '@championship_repository'
+    App\Domain\Entity\Division\DivisionRepository $divisions: '@division_repository'
+    App\Domain\Entity\Division\DivisionGameRepository $games: '@division_game_repository'
+    App\Domain\Entity\Team\TeamRepository $teams: '@team_repository'
+    App\Domain\Entity\Playoff\PlayoffRepository $playoffs: '@playoff_repository'
+    App\Domain\Entity\Playoff\PlayoffMatchRepository $matches: '@playoff_match_repository'
+
+    championship_repository:
+      class: App\Infrastructure\Doctrine\ORM\Repository\OrmChampionshipRepository
+      arguments:
+        - '@doctrine.orm.entity_manager'
+
+    division_repository:
+        class: App\Infrastructure\Doctrine\ORM\Repository\OrmDivisionRepository
+        arguments:
+            - '@doctrine.orm.entity_manager'
+
+    division_game_repository:
+        class: App\Infrastructure\Doctrine\ORM\Repository\OrmDivisionGameRepository
+        arguments:
+            - '@doctrine.orm.entity_manager'
+
+    team_repository:
+        class: App\Infrastructure\Doctrine\ORM\Repository\OrmTeamRepository
+        arguments:
+            - '@doctrine.orm.entity_manager'
+
+    playoff_repository:
+        class: App\Infrastructure\Doctrine\ORM\Repository\OrmPlayoffRepository
+        arguments:
+            - '@doctrine.orm.entity_manager'
+
+    playoff_match_repository:
+        class: App\Infrastructure\Doctrine\ORM\Repository\OrmPlayoffMatchRepository
+        arguments:
+            - '@doctrine.orm.entity_manager'
+    #endregion
+
+    #region UseCases
+    create_championship_usecase:
+        class: App\Application\UseCase\CreateChampionship\CreateChampionshipUseCase
+
+    create_championship_usecase_request:
+        class: App\Application\UseCase\CreateChampionship\CreateChampionshipRequest
+
+    create_championship_usecase_presenter:
+        class: App\Application\UseCase\CreateChampionship\CreateChampionshipPresenter
+
+    show_championship_usecase:
+        class: App\Application\UseCase\ShowChampionship\ShowChampionshipUseCase
+
+    show_championship_usecase_request:
+        class: App\Application\UseCase\ShowChampionship\ShowChampionshipRequest
+
+    show_championship_usecase_presenter:
+        class: App\Application\UseCase\ShowChampionship\ShowChampionshipPresenter
+
+    show_championships_usecase:
+        class: App\Application\UseCase\ShowChampionships\ShowChampionshipsUseCase
+
+    show_championships_usecase_presenter:
+        class: App\Application\UseCase\ShowChampionships\ShowChampionshipsPresenter
+
+    create_division_usecase:
+        class: App\Application\UseCase\CreateDivision\CreateDivisionUseCase
+
+    create_division_usecase_request:
+        class: App\Application\UseCase\CreateDivision\CreateDivisionRequest
+
+    create_division_usecase_presenter:
+        class: App\Application\UseCase\CreateDivision\CreateDivisionPresenter
+
+    play_division_games_usecase:
+        class: App\Application\UseCase\PlayDivisionGames\PlayDivisionGamesUseCase
+
+    play_division_games_usecase_request:
+        class: App\Application\UseCase\PlayDivisionGames\PlayDivisionGamesRequest
+
+    play_division_games_usecase_presenter:
+        class: App\Application\UseCase\PlayDivisionGames\PlayDivisionGamesPresenter
+
+    create_playoff_usecase:
+        class: App\Application\UseCase\CreatePlayoff\CreatePlayoffUseCase
+
+    create_playoff_usecase_request:
+        class: App\Application\UseCase\CreatePlayoff\CreatePlayoffRequest
+
+    create_playoff_usecase_presenter:
+        class: App\Application\UseCase\CreatePlayoff\CreatePlayoffPresenter
+
+    play_playoff_matches_usecase:
+        class: App\Application\UseCase\PlayPlayoffMatches\PlayPlayoffMatchesUseCase
+
+    play_playoff_matches_usecase_presenter:
+        class: App\Application\UseCase\PlayPlayoffMatches\PlayPlayoffMatchesPresenter
+    #endregion

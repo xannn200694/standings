@@ -1,0 +1,174 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>{{ championship.title }}</h1>
+    {% if championship.status.isFinished %}
+        <h2>The championship was won by the team: {{ championship.playoff.winner.name }}</h2>
+    {% endif %}
+    {% if championship.status.isNew %}
+        <form action="{{ path('divisions.create') }}" method="post">
+            <input type="hidden" name="championship" value="{{ championship.id }}">
+            <button type="submit" class="btn btn-success">Create Divisions</button>
+        </form>
+        <br>
+    {% endif %}
+
+    {% if championship.status.isDivisionFinished %}
+            <a href="{{ path('playoff.create', {id: championship.id}) }}" class="btn btn-primary">Generate playoff standing</a>
+    {% endif %}
+
+    {% if championship.status.isPlayoffCreated %}
+        <a href="{{ path('playoff.play', {id: championship.playoff.id}) }}" class="btn btn-primary">Play playoff matches</a>
+    {% endif %}
+
+    {% if championship.status.isDivisionCreated  %}
+        <a href="{{ path('divisions.games.play', {championshipId: championship.id}) }}" class="btn btn-primary"> Play games in Divisions</a>
+    {% endif %}
+
+    {% if(not championship.status.isNew) %}
+        {% if playoffPresenter %}
+            <div class="row pt-4">
+                <div class="col-3"></div>
+                <div class="col-3 border bg-primary">Semi-final</div>
+                <div class="col-3 border bg-primary">Final</div>
+                <div class="col-3 border bg-primary">Result</div>
+            </div>
+            <div class="row">
+                <div class="col-3">
+                    {% for playoffMatch in playoffPresenter.oneThirdFinal %}
+                        <div class="row border pt-4 pb-4">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="row justify-content-center">
+                                            <div class="col-12 border-bottom">
+                                                {{ playoffMatch.firstTeam.name }} ({{ playoffMatch.firstTeam.division.title }})
+                                            </div>
+                                        </div>
+                                        <div class="row justify-content-center">
+                                            <div class="col-12">
+                                                {{ playoffMatch.secondTeam.name }} ({{ playoffMatch.secondTeam.division.title }})
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="row justify-content-center">
+                                            {{ playoffMatch.firstTeamScore }} : {{ playoffMatch.secondTeamScore }}
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="col-3">
+                    {% for playoffMatch in playoffPresenter.semiFinal %}
+                        <div class="row border pt-4 pb-4">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="row justify-content-center">
+                                            <div class="col-12 border-bottom">
+                                                {{ playoffMatch.firstTeam.name }} ({{ playoffMatch.firstTeam.division.title }})
+                                            </div>
+                                        </div>
+                                        <div class="row justify-content-center">
+                                            <div class="col-12">
+                                                {{ playoffMatch.secondTeam.name }} ({{ playoffMatch.secondTeam.division.title }})
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="row justify-content-center">
+                                            {{ playoffMatch.firstTeamScore }} : {{ playoffMatch.secondTeamScore }}
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="col-3">
+                    {% for playoffMatch in playoffPresenter.final %}
+                        <div class="row border pt-4 pb-4">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="row justify-content-center">
+                                            <div class="col-12 border-bottom">
+                                                {{ playoffMatch.firstTeam.name }} ({{ playoffMatch.firstTeam.division.title }})
+                                            </div>
+                                        </div>
+                                        <div class="row justify-content-center">
+                                            <div class="col-12">
+                                                {{ playoffMatch.secondTeam.name }} ({{ playoffMatch.secondTeam.division.title }})
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="row justify-content-center">
+                                            {{ playoffMatch.firstTeamScore }} : {{ playoffMatch.secondTeamScore }}
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="col-3">
+                    {% for match in playoffPresenter.result %}
+                        <div class="row border-bottom">
+                            <div class="col-12">
+                                {{ match.firstTeam.name }} ({{ match.firstTeam.division.title }})
+                                /{{ match.secondTeam.name }} ({{ match.secondTeam.division.title }})
+                                - {{ match.firstTeamScore }}:{{ match.secondTeamScore }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="row">
+            {% for division in championship.divisions %}
+                <div class="col-6">
+                    <table class="table table-hover caption-top">
+                        <caption>Division {{ division.title }}</caption>
+                        <thead class="table-primary">
+                        <tr style="font-size: small">
+                            <td>Teams</td>
+                            {% for team in division.teams %}
+                                <td>{{ team.name }}</td>
+                            {% endfor %}
+                            <td>Score</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% set standings = matrixFactory.create(division) %}
+                        {% for horizontalTeam in division.teams %}
+                            <tr>
+                                <td class="table-primary" style="font-size: small"> {{ horizontalTeam.name }} </td>
+                                {% for verticalTeam in division.teams %}
+                                    {% if horizontalTeam.id() == verticalTeam.id() %}
+                                        <td class="table-active"></td>
+                                    {% else %}
+                                        <td>{{ standings.get(horizontalTeam.id(), verticalTeam.id()) }}</td>
+                                    {% endif %}
+                                {% endfor %}
+                                <td> {{ standings.total(horizontalTeam.id) }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+
+                    </table>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

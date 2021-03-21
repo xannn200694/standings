@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Championships</h1>
+    <table class="table table-hover">
+        <thead class="bg-primary">
+           <tr>
+               <th>Title</th>
+               <th>Status</th>
+               <th>Winner</th>
+               <th>Link</th>
+           </tr>
+        </thead>
+        <tbody>
+            {% for championship in championships %}
+                <tr>
+                    <td>{{ championship.title }}</td>
+                    <td>{{ championship.status }}</td>
+                    <td>
+                        {% if championship.status.isFinished %}
+                            {{ championship.playoff.winner.name }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ path('championship.show', {id: championship.id}) }}">view</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

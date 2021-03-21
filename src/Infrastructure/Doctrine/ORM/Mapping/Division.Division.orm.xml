@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity table="divisions"
+            name="App\Domain\Entity\Division\Division"
+            change-tracking-policy="DEFERRED_EXPLICIT">
+
+        <id name="id" column="id" type="integer">
+            <generator strategy="IDENTITY" />
+        </id>
+
+        <field name="title" column="title" length="50" />
+        <field name="createdAt" column="created_at" type="datetime_immutable" />
+        <field name="updatedAt" column="updated_at" type="datetime_immutable" />
+
+        <one-to-many field="games" target-entity="App\Domain\Entity\Division\DivisionGame" mapped-by="division">
+            <cascade>
+                <cascade-persist />
+                <cascade-remove />
+            </cascade>
+        </one-to-many>
+
+        <one-to-many field="teams" target-entity="App\Domain\Entity\Team\Team" mapped-by="division">
+            <cascade>
+                <cascade-persist />
+                <cascade-remove />
+            </cascade>
+        </one-to-many>
+
+        <many-to-one field="championship" target-entity="App\Domain\Entity\Championship\Championship" inversed-by="divisions">
+            <join-column name="championship_id" referenced-column-name="id" on-delete="CASCADE" />
+        </many-to-one>
+    </entity>
+
+</doctrine-mapping>
