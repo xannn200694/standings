@@ -2,28 +2,28 @@
 
 namespace App\Application\UseCase\CreatePlayoff;
 
+use App\Application\Transaction;
 use App\Domain\Service\Factory\Playoff\PlayoffFactory;
 use App\Application\UseCase;
 use App\Application\UseCasePresenter;
 use App\Application\UseCaseRequest;
 use App\Domain\Entity\Championship\ChampionshipRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 
 final class CreatePlayoffUseCase implements UseCase
 {
     private ChampionshipRepository $championships;
     private PlayoffFactory $playoffFactory;
-    private EntityManagerInterface $entityManager;
+    private Transaction $transaction;
 
     public function __construct(
         ChampionshipRepository $championships,
-        EntityManagerInterface $entityManager,
-        PlayoffFactory $playoffFactory
+        PlayoffFactory $playoffFactory,
+        Transaction $transaction
     ) {
         $this->championships = $championships;
         $this->playoffFactory = $playoffFactory;
-        $this->entityManager = $entityManager;
+        $this->transaction = $transaction;
     }
 
     public function execute(?UseCaseRequest $request, UseCasePresenter $presenter): void
@@ -33,7 +33,7 @@ final class CreatePlayoffUseCase implements UseCase
          */
         $championship = $this->championships->findOrFail($request->championshipId());
 
-        $this->entityManager->beginTransaction();
+        $this->transaction->begin();
 
         try {
             $this->playoffFactory->create($championship);
@@ -43,9 +43,9 @@ final class CreatePlayoffUseCase implements UseCase
             $this->championships->update($championship);
             $this->championships->save();
 
-            $this->entityManager->commit();
+            $this->transaction->commit();
         } catch (Exception $exception) {
-            $this->entityManager->rollback();
+            $this->transaction->rollback();
         }
 
         $result = new CreatePlayoffResult($championship);

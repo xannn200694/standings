@@ -3,26 +3,26 @@
 namespace App\Application\UseCase\PlayDivisionGames;
 
 use App\Application\Service\GamePlay\DivisionGamePlay;
+use App\Application\Transaction;
 use App\Application\UseCase;
 use App\Application\UseCasePresenter;
 use App\Application\UseCaseRequest;
 use App\Domain\Entity\Championship\ChampionshipRepository;
-use Doctrine\ORM\EntityManagerInterface;
 
 final class PlayDivisionGamesUseCase implements UseCase
 {
-    private EntityManagerInterface $entityManager;
     private DivisionGamePlay $gamePlay;
     private ChampionshipRepository $championships;
+    private Transaction $transaction;
 
     public function __construct(
         ChampionshipRepository $championships,
         DivisionGamePlay $gamePlay,
-        EntityManagerInterface $entityManager
+        Transaction $transaction
     ) {
-        $this->entityManager = $entityManager;
         $this->gamePlay = $gamePlay;
         $this->championships = $championships;
+        $this->transaction = $transaction;
     }
 
     public function execute(?UseCaseRequest $request, UseCasePresenter $presenter): void
@@ -33,7 +33,7 @@ final class PlayDivisionGamesUseCase implements UseCase
         $championship = $this->championships->findOrFail($request->championshipId());
 
         try {
-            $this->entityManager->beginTransaction();
+            $this->transaction->begin();
 
             foreach ($championship->divisions() as $division) {
                 $this->gamePlay->run($division);
@@ -43,9 +43,9 @@ final class PlayDivisionGamesUseCase implements UseCase
             $this->championships->update($championship);
             $this->championships->save();
 
-            $this->entityManager->commit();
+            $this->transaction->commit();
         } catch (\Exception $exception) {
-            $this->entityManager->rollBack();
+            $this->transaction->rollBack();
         }
 
         $result = new PlayDivisionGamesResult($championship);
