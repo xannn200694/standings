@@ -12,6 +12,9 @@ final class Playoff
     private int $id;
     private Championship $championship;
     private PlayoffStep $step;
+    /**
+     * @var PlayoffMatch[]|Collection $matches
+     */
     private $matches;
     private ?Team $winner = null;
 

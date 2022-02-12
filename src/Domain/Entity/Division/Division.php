@@ -81,20 +81,4 @@ class Division
     {
         return $this->teams;
     }
-    /*public function teams(): array
-    {
-        $teams = [];
-
-        $this->games()->map(
-            static function(DivisionGame $game) use (&$teams) {
-                if (isset($teams[$game->firstTeam()->id()])) {
-                    return;
-                }
- 
-                $teams[$game->firstTeam()->id()] = $game->firstTeam();
-            }
-        );
-
-        return $teams;
-    }*/
 }
