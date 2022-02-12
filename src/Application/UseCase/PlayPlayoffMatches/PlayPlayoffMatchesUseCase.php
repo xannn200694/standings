@@ -30,7 +30,7 @@ final class PlayPlayoffMatchesUseCase implements UseCase
         $this->championships = $championships;
     }
 
-    public function execute(UseCaseRequest $request, UseCasePresenter $presenter): void
+    public function execute(?UseCaseRequest $request, UseCasePresenter $presenter): void
     {
         /**
          * @var PlayPlayoffMatchesRequest $request
@@ -56,7 +56,6 @@ final class PlayPlayoffMatchesUseCase implements UseCase
             }
             $this->entityManager->commit();
         } catch (Exception $exception) {
-            dd($exception);
             $this->entityManager->rollBack();
         }
 

@@ -26,7 +26,7 @@ final class CreatePlayoffPresenter implements UseCasePresenter
     public function present()
     {
         /**
-         * @var MoveToPlayoffResult $result
+         * @var CreatePlayoffResult $result
          */
         $result = $this->result;
         $url = $this->urlGenerator->generate('championship.show', [

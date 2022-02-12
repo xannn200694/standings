@@ -26,7 +26,7 @@ final class CreatePlayoffUseCase implements UseCase
         $this->entityManager = $entityManager;
     }
 
-    public function execute(UseCaseRequest $request, UseCasePresenter $presenter): void
+    public function execute(?UseCaseRequest $request, UseCasePresenter $presenter): void
     {
         /**
          * @var CreatePlayoffRequest $request

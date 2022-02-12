@@ -30,7 +30,7 @@ final class CreateDivisionUseCase implements UseCase
         $this->divisionFactory = $divisionFactory;
     }
 
-    public function execute(UseCaseRequest $request, UseCasePresenter $presenter): void
+    public function execute(?UseCaseRequest $request, UseCasePresenter $presenter): void
     {
         /** @var CreateDivisionRequest $request */
         $championship = $this->championships->findOrFail($request->championshipId());

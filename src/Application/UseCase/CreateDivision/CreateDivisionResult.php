@@ -14,11 +14,6 @@ final class CreateDivisionResult implements UseCaseResult
         $this->championship = $championship;
     }
 
-    public function toArray(): array
-    {
-        return [];
-    }
-
     public function championship(): Championship
     {
         return $this->championship;

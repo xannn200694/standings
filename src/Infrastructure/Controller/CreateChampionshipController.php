@@ -10,16 +10,13 @@ use Symfony\Component\Routing\Annotation\Route;
 final class CreateChampionshipController
 {
     private UseCase $useCase;
-    private UseCaseRequest $request;
     private UseCasePresenter $presenter;
 
     public function __construct(
         UseCase $createChampionship,
-        UseCaseRequest $createChampionshipRequest,
         UseCasePresenter $createChampionshipPresenter
     ) {
         $this->useCase = $createChampionship;
-        $this->request = $createChampionshipRequest;
         $this->presenter = $createChampionshipPresenter;
     }
 
@@ -29,7 +26,7 @@ final class CreateChampionshipController
     public function __invoke()
     {
         $this->useCase->execute(
-            $this->request,
+            null,
             $this->presenter
         );
 

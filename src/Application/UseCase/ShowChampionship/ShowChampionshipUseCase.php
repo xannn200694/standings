@@ -22,7 +22,7 @@ final class ShowChampionshipUseCase implements UseCase
         $this->playoffStandingPresenterFactory = $playoffStandingPresenterFactory;
     }
 
-    public function execute(UseCaseRequest $request, UseCasePresenter $presenter): void
+    public function execute(?UseCaseRequest $request, UseCasePresenter $presenter): void
     {
         /**
          * @var ShowChampionshipRequest $request

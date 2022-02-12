@@ -15,11 +15,6 @@ final class PlayPlayoffMatchesResult implements UseCaseResult
         $this->championship = $championship;
     }
 
-    public function toArray(): array
-    {
-        return [];
-    }
-
     public function championship(): Championship
     {
         return $this->championship;

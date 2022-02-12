@@ -4,7 +4,6 @@ namespace App\Application\UseCase\CreateDivision;
 
 
 use App\Application\UseCaseRequest;
-use App\Domain\Entity\Championship\ChampionshipRepository;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
 

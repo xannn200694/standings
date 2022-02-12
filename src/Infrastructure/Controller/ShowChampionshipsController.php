@@ -3,8 +3,6 @@
 namespace App\Infrastructure\Controller;
 
 use App\Application\UseCase;
-use App\Application\UseCase\ShowChampionships\ShowChampionshipRequest;
-use App\Application\UseCase\ShowChampionships\ShowChampionshipsRequest;
 use App\Application\UseCasePresenter;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -26,10 +24,8 @@ final class ShowChampionshipsController
     */
     public function __invoke()
     {
-        $request = new ShowChampionshipsRequest();
-
         $this->useCase->execute(
-            $request,
+            null,
             $this->presenter
         );
 

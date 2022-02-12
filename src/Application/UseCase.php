@@ -4,5 +4,5 @@ namespace App\Application;
 
 interface UseCase
 {
-    public function execute(UseCaseRequest $request, UseCasePresenter $presenter): void;
+    public function execute(?UseCaseRequest $request, UseCasePresenter $presenter): void;
 }

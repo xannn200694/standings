@@ -2,6 +2,7 @@
 
 namespace App\Application\UseCase\CreateChampionship;
 
+
 use App\Application\UseCaseResult;
 use App\Domain\Entity\Championship\Championship;
 
@@ -12,11 +13,6 @@ final class CreateChampionshipResult implements UseCaseResult
     public function __construct(Championship $championship)
     {
         $this->championship = $championship;
-    }
-
-    public function toArray(): array
-    {
-        return [];
     }
 
     public function championship(): Championship

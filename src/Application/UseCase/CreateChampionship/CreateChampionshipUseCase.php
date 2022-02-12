@@ -18,7 +18,7 @@ final class CreateChampionshipUseCase implements UseCase
         $this->championships = $championships;
     }
 
-    public function execute(UseCaseRequest $request, UseCasePresenter $presenter): void
+    public function execute(?UseCaseRequest $request, UseCasePresenter $presenter): void
     {
         $championshipTitle = $this->generateTitle();
         $championship = new Championship($championshipTitle);

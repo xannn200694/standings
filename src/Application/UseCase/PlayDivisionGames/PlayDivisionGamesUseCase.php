@@ -25,7 +25,7 @@ final class PlayDivisionGamesUseCase implements UseCase
         $this->championships = $championships;
     }
 
-    public function execute(UseCaseRequest $request, UseCasePresenter $presenter): void
+    public function execute(?UseCaseRequest $request, UseCasePresenter $presenter): void
     {
         /**
          * @var PlayDivisionGamesRequest $request
